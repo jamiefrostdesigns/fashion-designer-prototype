@@ -162,4 +162,23 @@ data.clients.forEach(function(c){measurementLibrary(c)});
 persist();
 
 
+</script><script>
+/* Production profile and order-summary corrections */
+function clientLocation(c){return String((c&&(c.address||c.location))||"").trim()}
+var originalClientProfileView=view_client;
+view_client=function(){
+  var c=client(cid)||data.clients[0],location=clientLocation(c),markup=originalClientProfileView();
+  if(!location)return markup;
+  var safeLocation=typeof esc==="function"?esc(location):location;
+  return markup.replace(/(<div class=['"]card['"]>[\s\S]*?<\/div>)/,function(card){
+    return card.indexOf(safeLocation)>-1?card:card.replace("</div>","<p>"+safeLocation+"</p></div>");
+  });
+};
+var originalOrderDetailView=view_order;
+view_order=function(){
+  var markup=originalOrderDetailView(),heading="<h2 class='order-summary-title'>Order Summary</h2>";
+  markup=markup.replace("<div class='card'>"+heading,heading+"<div class='card'>");
+  if(markup.indexOf(heading)===-1)markup=markup.replace(/(<span class=['"]chip['"]>[\s\S]*?<\/span>)/,"$1"+heading);
+  return markup.replace("<h3>Production in progress</h3><p>No cutting, sewing, or fitting sub-stages.</p>","<h3>Production in progress</h3>");
+};
 </script></body></html>
