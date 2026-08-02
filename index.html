@@ -181,4 +181,21 @@ view_order=function(){
   if(markup.indexOf(heading)===-1)markup=markup.replace(/(<span class=['"]chip['"]>[\s\S]*?<\/span>)/,"$1"+heading);
   return markup.replace("<h3>Production in progress</h3><p>No cutting, sewing, or fitting sub-stages.</p>","<h3>Production in progress</h3>");
 };
+</script><script>
+/* client-card-workload-status */
+function clientCardWorkStatus(c){
+  var active=data.orders.filter(function(o){return o.cid==c.id&&o.status!=="Completed"});
+  if(!active.length)return "No active orders";
+  if(active.length>1)return active.length+" Active Orders";
+  var latest=active.reduce(function(newest,current){
+    var newestTime=Number(newest.createdOn||newest.id||0),currentTime=Number(current.createdOn||current.id||0);
+    return currentTime>=newestTime?current:newest;
+  });
+  return (latest.status||"Active")+" • 1 Active Order";
+}
+clientList=function(q){
+  return data.clients.filter(function(c){return c.name.toLowerCase().includes(q.toLowerCase())}).map(function(c){
+    return "<button class='card client' onclick=\"cid="+c.id+";go('client')\"><span class='avatar'>"+c.name.split(" ").map(function(x){return x[0]}).join("")+"</span><span class='grow'><b>"+esc(c.name)+"</b><p>"+esc(clientCardWorkStatus(c))+"</p></span>›</button>";
+  }).join("")||"<div class='empty'>No clients match.</div>";
+};
 </script></body></html>
