@@ -198,4 +198,21 @@ clientList=function(q){
     return "<button class='card client' onclick=\"cid="+c.id+";go('client')\"><span class='avatar'>"+c.name.split(" ").map(function(x){return x[0]}).join("")+"</span><span class='grow'><b>"+esc(c.name)+"</b><p>"+esc(clientCardWorkStatus(c))+"</p></span>›</button>";
   }).join("")||"<div class='empty'>No clients match.</div>";
 };
+</script><script>
+/* measurement-method-copy-update */
+drawMeasurementMethods=function(){
+  var ts=(data.templates||[]).filter(function(t){return !t.sets||t.sets.some(function(s){return measureDraft.sets.includes(s)})});
+  var templates=ts.length?"<h2>Use a saved template</h2>"+ts.map(function(t){
+    var i=data.templates.indexOf(t);
+    return "<button class='choice' onclick=\"prepareLibraryEntry('template',"+i+")\"><span><b>"+esc(t.name)+"</b><p>"+esc((t.sets||measureDraft.sets).join(" + "))+"</p></span>›</button>";
+  }).join(""):"";
+  measurementShell(
+    title("Select a method","For "+measureDraft.sets.join(" + ")+" measurements","ADD MEASUREMENTS")+
+    templates+
+    "<button class='choice' onclick=\"prepareLibraryEntry('voice')\"><span><b>Voice Capture</b><p>Speak measurements aloud. The app organizes them using the selected measurement set(s).</p></span>›</button>"+
+    "<button class='choice' onclick=\"prepareLibraryEntry('manual')\"><span><b>Enter Manually</b><p>Type measurements into the suggested fields for the selected measurement set(s).</p></span>›</button>"+
+    "<button class='choice' onclick=\"prepareLibraryEntry('scan')\"><span><b>Upload / Scan</b><p>Import a measurement book page or document to extract measurements.</p></span>›</button>",
+    "startMeasurementSelection()"
+  );
+};
 </script></body></html>
